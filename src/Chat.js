@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import {useParams} from 'react-router-dom';
 import './Chat.css';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
@@ -7,13 +8,35 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
-function chat() {
+import db from './firebase';
+function Chat() {
+
+  const { roomId} = useParams();
+  const [input , setInput]= useState("");
+  const [roomName , setRoomName] = useState("");
+  useEffect(()=>{
+    if (roomId){
+      db.collection('rooms').doc(roomId).onSnapshot(snapshot =>(setRoomName(snapshot.data().name)))
+    }
+  }, [roomId])
+
+  const sendMessage = (e) =>{
+    e.preventDefault();
+    console.log("you typed>>>",input);
+    setInput("");
+  }
+
+
+
+
+
   return (
+
     <div className="chat">
     <div className="chat_header">
     <AccountCircleIcon  />
     <div className="chat_headerInfo">
-      <h3>Room Name</h3>
+      <h3>{roomName}</h3>
       <p>Last Seen....</p>
     </div>
     <div className="chat_headerRight">
@@ -40,8 +63,8 @@ function chat() {
     <div className="chat_footer">
         <InsertEmoticonIcon />
           <form >
-            <input placeholder="Type a Message" type="text" />
-            <button>Send a Message</button>
+            <input value={input} onChange={e => setInput(e.target.value)} placeholder="Type a Message" type="text" />
+            <button onClick={sendMessage} type="Submit">Send a Message</button>
           </form>
         <MicIcon />
     </div>
@@ -49,4 +72,4 @@ function chat() {
   )
 }
 
-export default chat
+export default Chat
