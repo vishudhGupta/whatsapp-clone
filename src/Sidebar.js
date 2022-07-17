@@ -1,4 +1,4 @@
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -8,9 +8,11 @@ import './Sidebar.css';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import SidebarChat from './SidebarChat';
 import db from './firebase';
+import { useStateValue } from './StateProvider';
+import { Avatar } from '@material-ui/core';
 function Sidebar() {
   const [rooms, setRooms] = useState([]);
-
+  const [{ user }, dispatch]= useStateValue();
   useEffect( () => {
     db.collection('rooms').onSnapshot(snapshot => {
       setRooms(snapshot.docs.map(doc =>
@@ -27,7 +29,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar_header">
-        <AccountCircleIcon />
+        <Avatar src={user?.photoURL} />
         <div className="sidebar_headerRight">
           <IconButton>
             <DonutLargeIcon />
